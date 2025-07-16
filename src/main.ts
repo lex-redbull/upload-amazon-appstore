@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import fs from "fs"
 import fetch from 'node-fetch'
+import path from 'path'
 
 async function run() {
     try {
@@ -107,11 +108,15 @@ async function run() {
                 core.setFailed(error.message)
             })
 
+
+        const filename = path.basename(apkFile)    
+        
         await fetch(`${baseUrl}/v1/applications/${appId}/edits/${editId}/apks/${apkId}/replace`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/vnd.android.package-archive',
                 Authorization: authHeader,
+                'fileName': filename,
                 'If-Match': eTag,
             },
             body: fs.createReadStream(apkFile),
